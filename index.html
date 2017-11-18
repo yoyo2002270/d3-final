@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <style>
+        body{
+            background: #DDDDDD	;
+        }
+    div #haha {
+        position: relative;
+         top: 50px; 
+        left: 500px; 
+        height: 100px; 
+        width: 100%;
+        margin: auto;
+        }
+        
+        h1, h4{
+            text-align:center; 
+        }
+        
+        div #svgg{
+            position: relative;
+            margin: auto;
+
+        }
+        svg {
+            position: relative;
+            top: 20px;
+            left: 420px;
+            transform:translate(20 0);
+            margin: 0 auto;
+        }
+        
+      #taiwan{
+             position: absolute;
+            /* left: 20px; */
+              /* top:  100px; */
+              background: #fff;
+              width: 50px;
+              height: auto;
+              padding: 0px 10px;
+              border-radius: 5px;
+              box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+}
+#taiwan.hidden{
+    display: none; }
+    </style>
+</head>
+<body>
+    <div id="haha" >
+    <h1> 2016年台灣各縣市性侵案例數據比</h1>
+        <h4>總案件數：8712筆</h4>
+    </div>
+    
+    <div id="taiwan" class="hidden">
+    <p><strong id="city">縣市</strong></p>
+    <p id="num">性侵件數</p>
+    </div>
+    <div id="svgg"></div>
+    <script>
+       var data = {
+  "name": "地區",
+  "children": [
+    {"name":"高雄市","size":835},
+    {"name":"基隆市","size":182},
+    {"name":"嘉義市","size":98},
+    {"name":"嘉義縣","size":138},
+    {"name":"苗栗縣","size":165},
+    {"name":"花蓮縣","size":217},
+    {"name":"南投縣","size":187},
+    {"name":"屏東縣","size":295},
+    {"name":"金門縣","size":20},
+    {"name":"澎湖縣","size":12},
+    {"name":"連江縣","size":4},
+    {"name":"苗栗縣","size":165},
+    {"name":"台北市","size":755},
+    {"name":"台東縣","size":160},
+    {"name":"南投縣","size":188},
+    {"name":"台南市","size":443},
+    {"name":"台東縣","size":160},
+    {"name":"台南市","size":443},
+    {"name":"台中市","size":1013},
+    {"name":"桃園縣","size":980},
+    {"name":"新北市","size":1440},
+    {"name":"新竹市","size":167},
+    {"name":"宜蘭縣","size":170},
+    {"name":"雲林縣","size":194},
+    {"name":"彰化縣","size":413}
+  ]};
+
+        
+        
+        
+        
+var w = 550, format = d3.format(",d");
+var c10 = d3.scale.category20();
+
+var pack = d3.layout.pack()
+    .size([w, w])
+    .sort(null)
+    .padding(20)
+    .value(function(d) { return d.size; });
+
+var svg = d3.select("#svgg").append("svg").attr("width", w).attr("height", w);
+
+var selection = svg.datum(data).selectAll(".node").data(pack.nodes).enter()
+             .append("g")
+             .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+var titles = selection.append("title")
+                .attr("x", function(d) { return d.x; })
+                .attr("y", function(d) { return d.y; })
+                .text(function(d) { return d.name + (d.children ? "" : ": " + format(d.value)); });
+
+var circles = selection.append("circle")
+                .style("fill", function(d,i) { return !d.children ? c10(i) : "white"; })
+                .attr("stroke", "grey")
+//              .attr("cx", function(d) { return d.x; })
+//              .attr("cy", function(d) { return d.y; })
+                .attr("r", function(d)  { return d.r; });
+
+var text = selection.append("text").style("text-anchor","middle").attr("dy", ".3em").text( function(d) {return d.name; } );
+        
+        //點選會跑出名單
+        
+        d3.selectAll("circle").on("mouseover",function(d){
+                d3.select(this).attr({
+                      "stroke":"black",
+                  });
+                var xPos = d3.select(this).attr("cx");
+                var yPos = 
+                d3.select(this).attr("cy");
+                var taiwan = d3.select("#taiwan")
+                                .style({
+                                    left: (xPos+20)+"px",
+                                    top: (yPos+20)+"px" });
+                
+                
+                d3.select("#taiwan #city").text(d.name);
+                 d3.select("#taiwan #num").text(d.size);
+                
+                d3.select("#taiwan").classed("hidden",false);
+                
+//替換tool3p內容(選擇其id後,修改內容) d3.select("#tool3p").classed("hidden",false);
+            }).on("mouseout",function(){
+            d3.select(this).attr("stroke","grey");     
+         d3.select("#taiwan").classed("hidden",true);
+                
+            });
+        
+        
+
+    </script>
+
+</body>
+</html>
